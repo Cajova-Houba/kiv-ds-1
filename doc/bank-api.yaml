@@ -1,0 +1,92 @@
+swagger: "2.0"
+info:
+  description: "This is a sample bank server. It has it's own database with one account and supports two operations: CREDIT to deposit money to the account and DEBIT to withdraw money from the account."
+  version: "1.0.0"
+  title: "Bank server"
+  contact:
+    email: "valesz@students.zcu.cz"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "petstore.swagger.io"
+basePath: "/v1"
+tags:
+- name: "banking"
+  description: "Do your banking comfortably from home!"
+schemes:
+- "https"
+paths:
+  /credit:
+    post:
+      tags:
+      - "baking"
+      summary: "Deposit money to the account"
+      description: "Deposits the given amount of money to the account"
+      operationId: "credit"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Object containing amount of money to deposit to the account."
+        required: true
+        schema:
+          $ref: "#/definitions/BankingOperation"
+      responses:
+        405:
+          description: "Invalid input"
+        200:
+          description: "Operation done succesfully."
+      security:
+      - petstore_auth:
+        - "write:pets"
+        - "read:pets"
+  /debit:
+    post:
+      tags:
+      - "banking"
+      summary: "Withdraw money from the account"
+      description: "Withdraws the given amount of money from the account"
+      operationId: "debit"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Object containing amount of money to withdraw from the account."
+        required: true
+        schema:
+          $ref: "#/definitions/BankingOperation"
+      responses:
+        405:
+          description: "Invalid input"
+        200:
+          description: "Operation done succesfully."
+      security:
+      - petstore_auth:
+        - "write:pets"
+        - "read:pets"
+securityDefinitions:
+  petstore_auth:
+    type: "oauth2"
+    authorizationUrl: "http://petstore.swagger.io/oauth/dialog"
+    flow: "implicit"
+    scopes:
+      write:pets: "modify pets in your account"
+      read:pets: "read your pets"
+  api_key:
+    type: "apiKey"
+    name: "api_key"
+    in: "header"
+definitions:
+  BankingOperation:
+    type: "object"
+    properties:
+      amount:
+        type: "integer"
+        format: "int64"
+        description: "Amount of money to be used in banking operation."
