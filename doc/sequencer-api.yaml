@@ -1,8 +1,8 @@
 swagger: "2.0"
 info:
-  description: "This is a sample bank server. It has it's own database with one account and supports two operations: CREDIT to deposit money to the account and DEBIT to withdraw money from the account."
+  description: "This is a sample sequencer. It receives a transaction order from client (CREDIT/DEBIT) and assigns unique identifier to that transaction. This API is going to ba used by client application."
   version: "1.0.0"
-  title: "Bank server"
+  title: "Sequencer"
   contact:
     email: "valesz@students.zcu.cz"
   license:
@@ -37,8 +37,8 @@ paths:
       responses:
         405:
           description: "Invalid input"
-        200:
-          description: "Operation done succesfully."
+        202:
+          description: "Transaction received succesfully."
       security:
       - petstore_auth:
         - "write:pets"
@@ -64,8 +64,8 @@ paths:
       responses:
         405:
           description: "Invalid input"
-        200:
-          description: "Operation done succesfully."
+        202:
+          description: "Transaction received succesfully."
       security:
       - petstore_auth:
         - "write:pets"
@@ -90,7 +90,3 @@ definitions:
         type: "integer"
         format: "int64"
         description: "Amount of money to be used in transaction."
-      id:
-        type: "integer"
-        format: "int64"
-        description: "Unique identifier of each transaction."
