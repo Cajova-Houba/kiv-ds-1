@@ -1,8 +1,8 @@
 swagger: "2.0"
 info:
-  description: "This is a sample bank server. It has it's own database with one account and supports two operations: CREDIT to deposit money to the account and DEBIT to withdraw money from the account."
+  description: "This is a shuffler. It receives transaction orders from the Sequencer, stores them in queue, shuffles them and then sends them to the banking servers in random order."
   version: "1.0.0"
-  title: "Bank server"
+  title: "Shuffler"
   contact:
     email: "valesz@students.zcu.cz"
   license:
@@ -11,15 +11,15 @@ info:
 host: "petstore.swagger.io"
 basePath: "/v1"
 tags:
-- name: "banking"
-  description: "Do your banking comfortably from home!"
+- name: "shufflin"
+  description: "Every day I'm shufflin'!"
 schemes:
 - "https"
 paths:
   /credit:
     post:
       tags:
-      - "banking"
+      - "shufflin"
       summary: "Deposit money to the account"
       description: "Deposits the given amount of money to the account"
       operationId: "credit"
@@ -37,8 +37,8 @@ paths:
       responses:
         405:
           description: "Invalid input"
-        200:
-          description: "Operation done succesfully."
+        202:
+          description: "Transaction received succesfully."
       security:
       - petstore_auth:
         - "write:pets"
@@ -46,7 +46,7 @@ paths:
   /debit:
     post:
       tags:
-      - "banking"
+      - "shufflin"
       summary: "Withdraw money from the account"
       description: "Withdraws the given amount of money from the account"
       operationId: "debit"
@@ -64,8 +64,8 @@ paths:
       responses:
         405:
           description: "Invalid input"
-        200:
-          description: "Operation done succesfully."
+        202:
+          description: "Transaction received succesfully."
       security:
       - petstore_auth:
         - "write:pets"

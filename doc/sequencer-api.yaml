@@ -19,7 +19,7 @@ paths:
   /credit:
     post:
       tags:
-      - "baking"
+      - "banking"
       summary: "Deposit money to the account"
       description: "Deposits the given amount of money to the account"
       operationId: "credit"
