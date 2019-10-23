@@ -13,7 +13,7 @@
 #  curl -X POST --header "Content-Type: application/json" --data '{"amount":5}' localhost:8090/credit 
 #
 
-from bottle import Bottle, template, request
+from bottle import Bottle, template, request, HTTPResponse
 
 class Counter:
 	"""
@@ -73,6 +73,7 @@ class Sequencer:
 		new_body['id'] = self._counter.get_next_id()
 		print(new_body)
 		# todo call shuffler API
+		return HTTPResponse(status = 202)
 	
 	def _debit(self):
 		"""
@@ -82,7 +83,7 @@ class Sequencer:
 		new_body = request.json
 		new_body['id'] = self._counter.get_next_id()
 		print(new_body)
-		# todo call shuffler API
+		return HTTPResponse(status = 202)
 	
 		
 		
