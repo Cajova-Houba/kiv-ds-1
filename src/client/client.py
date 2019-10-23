@@ -8,9 +8,13 @@
 #
 from random import randrange
 import sys
+import requests
 
 # Defualt number of requests to generate.
 DEFAULT_REQUEST_COUNT = 100
+
+# Base API url.
+API_URL = 'http://localhost:8090'
 
 class RequestData:
 	"""
@@ -58,7 +62,15 @@ class Client:
 		:param RequestData req: Object with request data.
 		"""
 		print("Sending '%s' request for amount of: %d." % (req.operation, req.amount))
-		# todo: API call
+		operation_api = '/' + req.operation.lower()
+		headers = {'Content-Type': 'application/json'}
+		response = requests.post(API_URL + operation_api, headers = headers, json = {'amount' : req.amount})
+		if response.status_code == 202:
+			print("Request sent.")
+		elif response.status_code == 404:
+			print("API for %s operation not found." % req.operation)
+		else: 
+			print("Unexpected error, response with status %d returned." % response.status_code)
 		
 	def run(self):
 		"""
