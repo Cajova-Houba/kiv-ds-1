@@ -1,6 +1,6 @@
 #
 # This script will simulate the sequencer. It will accept transaction orders
-# from client and makr each order with an unique identifier. Transaction order
+# from client and mark each order with an unique identifier. Transaction order
 # with unique ID is then sent to shuffler.
 #
 # API offer by sequencer is described in doc/sequencer-api.yml.
