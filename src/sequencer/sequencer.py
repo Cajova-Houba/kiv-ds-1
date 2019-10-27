@@ -10,10 +10,13 @@
 # pip install bottle
 #
 # Test it using curl:
-#  curl -X POST --header "Content-Type: application/json" --data '{"amount":5}' localhost:8090/credit 
+#  curl -X POST --header "Content-Type: application/json" --data '{"amount":5}' localhost:8080/credit 
 #
 
 from bottle import Bottle, template, request, HTTPResponse
+import requests
+
+SHUFFLER_URL = "http://localhost:8090"
 
 class Counter:
 	"""
@@ -72,7 +75,7 @@ class Sequencer:
 		new_body = request.json
 		new_body['id'] = self._counter.get_next_id()
 		print(new_body)
-		# todo call shuffler API
+		self._send_to_shuffler("credit", new_body)
 		return HTTPResponse(status = 202)
 	
 	def _debit(self):
@@ -83,8 +86,18 @@ class Sequencer:
 		new_body = request.json
 		new_body['id'] = self._counter.get_next_id()
 		print(new_body)
+		self._send_to_shuffler("debit", new_body)
 		return HTTPResponse(status = 202)
 	
+	def _send_to_shuffler(self, operation, transaction):
+		"""
+		Sends transaction with id to shuffler.
+		"""
+		operation_api = "/" + str(operation)
+		headers = {'Content-Type': 'application/json'}
+		response = requests.post(SHUFFLER_URL + operation_api, headers = headers, json = transaction)
+		if response.status_code != 202:
+			print("Error while sending transaction %d: %d" % (transaction["id"], response.status_code))
 		
 		
 def main():
@@ -92,7 +105,7 @@ def main():
 	Main method of the script, starts the server.
 	"""
 	counter = Counter()
-	sequencer = Sequencer(counter, '0.0.0.0', 8090, True)
+	sequencer = Sequencer(counter, '0.0.0.0', 8080, True)
 	sequencer.start()
 		
 
