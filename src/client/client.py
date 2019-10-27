@@ -14,7 +14,7 @@ import requests
 DEFAULT_REQUEST_COUNT = 100
 
 # Base API url.
-API_URL = 'http://localhost:8090'
+API_URL = 'http://localhost:8080'
 
 class RequestData:
 	"""
