@@ -16,9 +16,7 @@
 from bottle import Bottle, template, request, HTTPResponse
 import random
 import requests
-
-# Base bank server url.
-BANK_URL = 'http://localhost:8100'
+import json
 
 # Size of the internal queue for transactions
 QUEUE_SIZE = 10
@@ -29,7 +27,7 @@ class Shuffler:
 	Implementation of the shuffler server.
 	"""
 	
-	def __init__(self, host, port, debug):
+	def __init__(self, host, port, debug, bank_servers):
 		"""
 		Initializes this server with given values.
 		"""
@@ -37,6 +35,7 @@ class Shuffler:
 		self._port = port
 		self._debug = debug
 		self._queue = []
+		self._bank_servers = bank_servers
 		self._app = Bottle()
 		self._route()
 	
@@ -91,23 +90,36 @@ class Shuffler:
 		
 		random.shuffle(self._queue)
 		
-		for transaction in self._queue:
-			operation_api = "/" + transaction["type"]
-			headers = {'Content-Type': 'application/json'}
-			del transaction["type"]
-			response = requests.post(BANK_URL + operation_api, headers = headers, json = transaction)
-			if response.status_code != 200:
-				print("Error while sending transaction %d: %d" % (transaction["id"], response.status_code))
+		for index,bank_server in enumerate(self._bank_servers):
+			print("Sending tranactions to server %d: %s" %(index, bank_server))
+			for transaction in self._queue:
+				operation_api = "/" + transaction["type"]
+				headers = {'Content-Type': 'application/json'}
+				del transaction["type"]
+				response = requests.post(bank_server + operation_api, headers = headers, json = transaction)
+				if response.status_code != 200:
+					print("Error while sending transaction %d: %d" % (transaction["id"], response.status_code))
 		
 		self._queue = []
 		print("Done.")
 		
+
+def load_bank_servers():
+	"""
+	Loads urls to bank servers from ./bank_servers.json file.
+	"""
+	input_file = open ('bank_servers.json')
+	json_array = json.load(input_file)
+	input_file.close()
+	return json_array
+	
 		
 def main():
 	"""
 	Main method of the script, starts the server.
 	"""
-	shuffler = Shuffler('0.0.0.0', 8090, True)
+	bank_servers = load_bank_servers()
+	shuffler = Shuffler('0.0.0.0', 8090, True, bank_servers)
 	shuffler.start()
 		
 
