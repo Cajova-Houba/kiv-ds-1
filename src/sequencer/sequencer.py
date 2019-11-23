@@ -82,7 +82,6 @@ class Sequencer:
 		"""
 		Handler for /debit API.
 		"""
-		print(request.json)
 		new_body = request.json
 		new_body['id'] = self._counter.get_next_id()
 		print(new_body)
