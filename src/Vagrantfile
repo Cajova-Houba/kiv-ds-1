@@ -1,0 +1,39 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+VAGRANTFILE_API_VERSION = "2"
+
+cluster = {
+  #"client"  => { :ip => "10.0.1.10", :cpus => 1, :mem => 512, :scriptSrc => './client/client.py', :scriptDst => 'client.py', :bootstrap => './client/bootstrap.sh' },
+  # "seq" => { :ip => "10.0.1.11", :cpus => 1, :mem => 512 },
+  # "shuff" => { :ip => "10.0.1.12", :cpus => 1, :mem => 512 },
+   "bank-1" => { :ip => "10.0.1.13", :cpus => 1, :mem => 512, :sources => './bank', :destination => 'bank', :bootstrap => './bank/bootstrap.sh' },
+  # "bank-2" => { :ip => "10.0.1.14", :cpus => 1, :mem => 512 },
+  # "bank-3" => { :ip => "10.0.1.15", :cpus => 1, :mem => 512 },
+  # "bank-4" => { :ip => "10.0.1.16", :cpus => 1, :mem => 512 },
+}
+
+# All Vagrant configuration is done below. The "2" in Vagrant.configure
+# configures the configuration version (we support older styles for
+# backwards compatibility). Please don't change it unless you know what
+# you're doing.
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  # VM config
+  config.vm.box = "ubuntu/trusty32"
+  
+  cluster.each_with_index do |(hostname, info), index|
+    config.vm.define hostname do |cfg|
+	  cfg.vm.provider :virtualbox do |vb, override|
+	    
+		override.vm.network :private_network, ip: "#{info[:ip]}"
+		override.vm.hostname = hostname
+		vb.name = hostname
+		vb.customize ["modifyvm", :id, "--memory", info[:mem], "--cpus", info[:cpus], "--hwvirtex", "off", "--usb", "off"]
+		
+		config.vm.provision "file", source: "#{info[:sources]}", destination: "#{info[:destination]}"
+		
+		config.vm.provision "shell", path: "#{info[:bootstrap]}"
+      end # end provider
+	end # end config
+  end # end cluster
+end
+
