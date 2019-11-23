@@ -16,6 +16,29 @@
 
 from bottle import Bottle, template, request, HTTPResponse
 import mysql.connector
+import heapq
+
+class Transaction:
+	"""
+	Wrapper for bank transaction so that heap can be used.
+	"""
+	
+	def __init__(self, id, amount, type):
+		self.id = id
+		self.amount = amount
+		self.type = type
+		
+	def __cmp__(self, other):
+		return self.id < other.id
+		
+	def __lt__(self, other):
+		return self.id < other.id
+		
+	def is_debit(self):
+		return self.amount == "debit"
+		
+	def to_string(self):
+		return "{id: %s, amount: %s, type: %s}" % (self.id, self.amount, self.type)
 
 class DbConnector:
 	"""
@@ -85,6 +108,8 @@ class Bank:
 		self._port = port
 		self._debug = debug
 		self._db_connector = db_connector
+		self._expected_id = 0
+		self._transaction_heap = []
 		self._app = Bottle()
 		self._route()
 	
@@ -107,7 +132,7 @@ class Bank:
 		"""
 		transaction = request.json
 		print("Credit: " + str(transaction))
-		self._db_connector.credit_money(transaction["amount"])
+		self._add_transaction(Transaction(transaction["id"], transaction["amount"], "credit"))
 		return HTTPResponse(status = 200)
 	
 	def _debit(self):
@@ -116,9 +141,29 @@ class Bank:
 		"""
 		transaction = request.json
 		print("Debit: " + str(transaction))
-		self._db_connector.debit_money(transaction["amount"])
+		self._add_transaction(Transaction(transaction["id"], transaction["amount"], "debit"))
 		return HTTPResponse(status = 200)
 	
+	def _add_transaction(self, transaction):
+		"""
+		Adds transaction to the heap and if the expected id is at the top of heap
+		the transaction is executed.
+		
+		:param Transaction transaction: Transaction to be added to the queue.
+		"""
+		heapq.heappush(self._transaction_heap, transaction)
+		
+		# expected transaction id -> pop from heap and execute it
+		while len(self._transaction_heap) > 0 and self._transaction_heap[0].id == self._expected_id:
+			t = heapq.heappop(self._transaction_heap)
+			print("Executing transaction: %s" % t.to_string())
+			if t.is_debit():
+				self._db_connector.debit_money(t.amount)
+			else:
+				self._db_connector.credit_money(t.amount)
+				
+			self._expected_id = self._expected_id + 1
+				
 		
 		
 def main():
