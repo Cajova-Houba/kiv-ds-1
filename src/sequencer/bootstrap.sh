@@ -1,4 +1,5 @@
 #!/bin/bash
+sudo stop sequencer
 
 apt-get update 
 export DEBIAN_FRONTEND=noninteractive
@@ -14,6 +15,5 @@ pip3 install requests
 # copy service configuration
 sudo cp sequencer/sequencer.conf /etc/init
 
-sudo stop sequencer
 sudo initctl reload-configuration
 sudo start sequencer

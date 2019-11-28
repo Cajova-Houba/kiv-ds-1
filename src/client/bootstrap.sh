@@ -1,4 +1,5 @@
 #!/bin/bash
+sudo stop client
 
 apt-get update 
 export DEBIAN_FRONTEND=noninteractive
@@ -13,6 +14,5 @@ pip3 install requests
 # copy contents
 sudo cp client/client.conf /etc/init
 
-sudo stop client
 sudo initctl reload-configuration
 sudo start client

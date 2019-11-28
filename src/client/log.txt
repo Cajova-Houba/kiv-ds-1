@@ -1,0 +1,4 @@
+17:24:25,139 root INFO Starting client
+17:24:25,140 root INFO Generating 20 requests.
+17:24:25,140 root INFO Sending 'DEBIT' request for amount of: 19359.
+17:24:25,145 urllib3.connectionpool DEBUG Starting new HTTP connection (1): 10.99.1.:80

@@ -201,6 +201,8 @@ def main():
 	amount = db_connector.get_amount();
 	if amount is not None:
 		logging.info("Original balance: %s" % str(amount[0]));
+	else:
+		logging.warning("No original amount.");
 	
 	bank = Bank('0.0.0.0', 8100, True, db_connector)
 	bank.start()

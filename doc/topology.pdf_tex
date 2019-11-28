@@ -1,0 +1,85 @@
+%% Creator: Inkscape inkscape 0.92.3, www.inkscape.org
+%% PDF/EPS/PS + LaTeX output extension by Johan Engelen, 2010
+%% Accompanies image file 'topology.pdf' (pdf, eps, ps)
+%%
+%% To include the image in your LaTeX document, write
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics{<filename>.pdf}
+%% To scale the image, write
+%%   \def\svgwidth{<desired width>}
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics[width=<desired width>]{<filename>.pdf}
+%%
+%% Images with a different path to the parent latex file can
+%% be accessed with the `import' package (which may need to be
+%% installed) using
+%%   \usepackage{import}
+%% in the preamble, and then including the image with
+%%   \import{<path to file>}{<filename>.pdf_tex}
+%% Alternatively, one can specify
+%%   \graphicspath{{<path to file>/}}
+%% 
+%% For more information, please see info/svg-inkscape on CTAN:
+%%   http://tug.ctan.org/tex-archive/info/svg-inkscape
+%%
+\begingroup%
+  \makeatletter%
+  \providecommand\color[2][]{%
+    \errmessage{(Inkscape) Color is used for the text in Inkscape, but the package 'color.sty' is not loaded}%
+    \renewcommand\color[2][]{}%
+  }%
+  \providecommand\transparent[1]{%
+    \errmessage{(Inkscape) Transparency is used (non-zero) for the text in Inkscape, but the package 'transparent.sty' is not loaded}%
+    \renewcommand\transparent[1]{}%
+  }%
+  \providecommand\rotatebox[2]{#2}%
+  \newcommand*\fsize{\dimexpr\f@size pt\relax}%
+  \newcommand*\lineheight[1]{\fontsize{\fsize}{#1\fsize}\selectfont}%
+  \ifx\svgwidth\undefined%
+    \setlength{\unitlength}{603.57275391bp}%
+    \ifx\svgscale\undefined%
+      \relax%
+    \else%
+      \setlength{\unitlength}{\unitlength * \real{\svgscale}}%
+    \fi%
+  \else%
+    \setlength{\unitlength}{\svgwidth}%
+  \fi%
+  \global\let\svgwidth\undefined%
+  \global\let\svgscale\undefined%
+  \makeatother%
+  \begin{picture}(1,0.37402285)%
+    \lineheight{1}%
+    \setlength\tabcolsep{0pt}%
+    \put(0,0){\includegraphics[width=\unitlength,page=1]{topology.pdf}}%
+    \put(0.07455605,0.18266232){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}Client\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=2]{topology.pdf}}%
+    \put(0.2982242,0.18266232){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}Sequencer\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=3]{topology.pdf}}%
+    \put(0.50946634,0.18266232){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}Shuffler\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=4]{topology.pdf}}%
+    \put(0.7579865,0.33177442){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}Bank 1\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=5]{topology.pdf}}%
+    \put(0.7579865,0.23236635){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}Bank 2\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=6]{topology.pdf}}%
+    \put(0.7579865,0.13295829){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}Bank 3\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=7]{topology.pdf}}%
+    \put(0.7579865,0.03355022){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}Bank 4\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=8]{topology.pdf}}%
+    \put(0.07455605,0.24479236){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}10.99.1.10\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=9]{topology.pdf}}%
+    \put(0.2982242,0.24479236){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}10.99.1.11:8100\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=10]{topology.pdf}}%
+    \put(0.51070894,0.24479236){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}10.99.1.12:8100\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=11]{topology.pdf}}%
+    \put(0.9083412,0.33177442){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}10.99.1.13:8100\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=12]{topology.pdf}}%
+    \put(0.9083412,0.23236635){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}<div>10.99.1.14:8100</div>\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=13]{topology.pdf}}%
+    \put(0.9083412,0.13295829){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}<div>10.99.1.15:8100</div>\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=14]{topology.pdf}}%
+    \put(0.9083412,0.03355022){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}10.99.1.16:8100\end{tabular}}}}%
+  \end{picture}%
+\endgroup%

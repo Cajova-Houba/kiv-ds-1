@@ -1,4 +1,5 @@
 #!/bin/bash
+sudo stop bank
 
 apt-get update 
 export DEBIAN_FRONTEND=noninteractive
@@ -23,7 +24,6 @@ pip3 install mysql-connector-python
 # copy contents
 sudo cp bank/bank.conf /etc/init
 
-sudo stop bank
 sudo rm -f bank/balance.txt
 sudo initctl reload-configuration
 sudo start bank

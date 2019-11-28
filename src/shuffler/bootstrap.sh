@@ -1,4 +1,5 @@
 #!/bin/bash
+sudo stop shuffler
 
 apt-get update 
 export DEBIAN_FRONTEND=noninteractive
@@ -14,6 +15,5 @@ pip3 install requests
 # copy contents
 sudo cp shuffler/shuffler.conf /etc/init
 
-sudo stop shuffler
 sudo initctl reload-configuration
 sudo start shuffler

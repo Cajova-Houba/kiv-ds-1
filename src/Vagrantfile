@@ -5,8 +5,8 @@ VAGRANTFILE_API_VERSION = "2"
 cluster = {
   "bank-1" => { :ip => "10.99.1.13", :cpus => 1, :mem => 512, :sources => './bank', :destination => 'bank', :bootstrap => './bank/bootstrap.sh' },
   "bank-2" => { :ip => "10.99.1.14", :cpus => 1, :mem => 512, :sources => './bank', :destination => 'bank', :bootstrap => './bank/bootstrap.sh' },
-  #"bank-3" => { :ip => "10.99.1.15", :cpus => 1, :mem => 512, :sources => './bank', :destination => 'bank', :bootstrap => './bank/bootstrap.sh' },
-  #"bank-4" => { :ip => "10.99.1.16", :cpus => 1, :mem => 512, :sources => './bank', :destination => 'bank', :bootstrap => './bank/bootstrap.sh' },
+  "bank-3" => { :ip => "10.99.1.15", :cpus => 1, :mem => 512, :sources => './bank', :destination => 'bank', :bootstrap => './bank/bootstrap.sh' },
+  "bank-4" => { :ip => "10.99.1.16", :cpus => 1, :mem => 512, :sources => './bank', :destination => 'bank', :bootstrap => './bank/bootstrap.sh' },
   "shuffler"  => { :ip => "10.99.1.12", :cpus => 1, :mem => 512, :sources => './shuffler', :destination => 'shuffler', :bootstrap => './shuffler/bootstrap.sh' },
   "sequencer"  => { :ip => "10.99.1.11", :cpus => 1, :mem => 512, :sources => './sequencer', :destination => 'sequencer', :bootstrap => './sequencer/bootstrap.sh' },
   "client"  => { :ip => "10.99.1.10", :cpus => 1, :mem => 512, :sources => './client', :destination => 'client', :bootstrap => './client/bootstrap.sh' },
