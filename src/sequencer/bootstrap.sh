@@ -10,4 +10,10 @@ apt-get install --force-yes -y python3-pip
 # run script
 pip3 install bottle
 pip3 install requests
-python3 sequencer.py
+
+# copy service configuration
+sudo cp sequencer/sequencer.conf /etc/init
+
+sudo stop sequencer
+sudo initctl reload-configuration
+sudo start sequencer

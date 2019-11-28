@@ -17,6 +17,8 @@ from bottle import Bottle, template, request, HTTPResponse
 import random
 import requests
 import json
+import sys
+import logging
 
 # Size of the internal queue for transactions
 QUEUE_SIZE = 10
@@ -57,9 +59,8 @@ class Shuffler:
 		Handler for /credit API.
 		"""
 		transaction = request.json
-		transaction["type"] = "credit"
-		print("Credit: " + str(transaction))
-		self._add_to_queue(transaction)
+		logging.info("Credit: " + str(transaction))
+		self._add_to_queue("credit", transaction)
 		return HTTPResponse(status = 202)
 	
 	def _debit(self):
@@ -67,17 +68,16 @@ class Shuffler:
 		Handler for /debit API.
 		"""
 		transaction = request.json
-		transaction["type"] = "debit"
-		print("Debit: " + str(transaction))
-		self._add_to_queue(transaction)
+		logging.info("Debit: " + str(transaction))
+		self._add_to_queue("debit", transaction)
 		return HTTPResponse(status = 202)
 	
-	def _add_to_queue(self, transaction):
+	def _add_to_queue(self, type, transaction):
 		"""
 		Adds transaction to the queue and if the queue is full, 
 		calls method to send transactions to bank servers.
 		"""
-		self._queue.append(transaction)
+		self._queue.append([type, transaction])
 		if len(self._queue) == QUEUE_SIZE:
 			self._send_to_bank_servers()
 	
@@ -86,40 +86,71 @@ class Shuffler:
 		Sends the contents of queue to the bank servers.
 		The queue is empty after requests are sent.
 		"""
-		print("Sending transactions to bank servers.")
+		logging.info("Sending transactions to bank servers.")
 		
 		random.shuffle(self._queue)
 		
-		for index,bank_server in enumerate(self._bank_servers):
-			print("Sending tranactions to server %d: %s" %(index, bank_server))
-			for transaction in self._queue:
-				operation_api = "/" + transaction["type"]
-				headers = {'Content-Type': 'application/json'}
-				del transaction["type"]
-				response = requests.post(bank_server + operation_api, headers = headers, json = transaction)
-				if response.status_code != 200:
-					print("Error while sending transaction %d: %d" % (transaction["id"], response.status_code))
+		for transaction in self._queue:
+			for index,bank_server in enumerate(self._bank_servers):
+				logging.info("Sending tranaction %d to server %d: %s" %(transaction[1]["id"], index, bank_server))
+				try:
+					operation_api = "/" + transaction[0]
+					headers = {'Content-Type': 'application/json'}
+					response = requests.post(bank_server + operation_api, headers = headers, data = json.dumps(transaction[1]))
+					if response.status_code != 200:
+						logging.warning("Error while sending transaction %d: %d" % (transaction[1]["id"], response.status_code))
+				except:
+					logging.warning("Error while sending transaction %d" % transaction[1]["id"])
 		
 		self._queue = []
-		print("Done.")
+		logging.info("Done.")
 		
 
-def load_bank_servers():
+def load_bank_servers(filename):
 	"""
 	Loads urls to bank servers from ./bank_servers.json file.
 	"""
-	input_file = open ('bank_servers.json')
+	input_file = open (filename, 'r')
 	json_array = json.load(input_file)
 	input_file.close()
 	return json_array
+
+
+def read_params():
+	"""
+	Reads console parameters and returns them in array.
+	Expected order:
+	path to file with bank servers configuration
 	
+	:return: Array with ["request_count"] and ["base_api_url"]. None is returned in case of error.
+	"""
+	arg_count = len(sys.argv)
+	
+	params = {}
+	
+	if arg_count == 2:
+		params["bank_servers_conf"] = sys.argv[1]
+		return params
+	else:
+		logging.error("Wrong number of console arguments (%d), expected 1." % (len(sys.argv) - 1))
+		return None	
 		
 def main():
 	"""
 	Main method of the script, starts the server.
 	"""
-	bank_servers = load_bank_servers()
-	shuffler = Shuffler('0.0.0.0', 8090, True, bank_servers)
+	logging.basicConfig(filename='log.txt',
+                            filemode='a',
+                            format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
+                            datefmt='%H:%M:%S',
+                            level=logging.DEBUG)
+	
+	logging.info("Starting shuffler")
+	params = read_params()
+	if params is None:
+		return 
+	bank_servers = load_bank_servers(params["bank_servers_conf"])
+	shuffler = Shuffler('0.0.0.0', 8100, True, bank_servers)
 	shuffler.start()
 		
 

@@ -18,6 +18,7 @@
 --
 -- Current Database: `bank_server`
 --
+DROP DATABASE IF EXISTS `bank_server`;
 
 CREATE DATABASE /*!32312 IF NOT EXISTS*/ `bank_server` /*!40100 DEFAULT CHARACTER SET utf8 */;
 

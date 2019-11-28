@@ -9,4 +9,10 @@ apt-get install --force-yes -y python3-pip
 
 # run script
 pip3 install requests
-python3 client.py 200
+
+# copy contents
+sudo cp client/client.conf /etc/init
+
+sudo stop client
+sudo initctl reload-configuration
+sudo start client

@@ -9,6 +9,8 @@
 from random import randrange
 import sys
 import requests
+import json
+import logging
 
 # Defualt number of requests to generate.
 DEFAULT_REQUEST_COUNT = 100
@@ -63,27 +65,27 @@ class Client:
 		
 		:param RequestData req: Object with request data.
 		"""
-		print("Sending '%s' request for amount of: %d." % (req.operation, req.amount))
+		logging.info("Sending '%s' request for amount of: %d." % (req.operation, req.amount))
 		operation_api = '/' + req.operation.lower()
 		headers = {'Content-Type': 'application/json'}
-		response = requests.post(self.api_url + operation_api, headers = headers, json = {'amount' : req.amount})
+		response = requests.post(self.api_url + operation_api, headers = headers, data = json.dumps({'amount' : req.amount}))
 		if response.status_code == 202:
-			print("Request sent.")
+			logging.info("Request sent.")
 		elif response.status_code == 404:
-			print("API for %s operation not found." % req.operation)
+			logging.info("API for %s operation not found." % req.operation)
 		else: 
-			print("Unexpected error, response with status %d returned." % response.status_code)
+			logging.warning("Unexpected error, response with status %d returned." % response.status_code)
 		
 	def run(self):
 		"""
 		Starts the client. This method will exit after generating all the requests.
 		"""
-		print("Generating %d requests." % self.request_count)
+		logging.info("Generating %d requests." % self.request_count)
 		for req_countetr in range(0, self.request_count):
 			req = self._generate_request()
 			self._send_request(req)
 		
-		print("Requets generated and sent.")
+		logging.info("Requets generated and sent.")
 			
 
 def read_request_count():
@@ -98,7 +100,7 @@ def read_request_count():
 	try:
 		val = int(sys.argv[1])
 	except(ValueError):
-		print("'%s' is not a valid number, using default value for request count." % sys.argv[1])
+		logging.warning("'%s' is not a valid number, using default value for request count." % sys.argv[1])
 	
 	return val
 
@@ -125,7 +127,7 @@ def read_params():
 		params["base_api_url"] = sys.argv[2]
 		return params
 	else:
-		print("Wrong number of console arguments (%d), expected 1 or 2." % (len(sys.argv) - 1))
+		logging.warning("Wrong number of console arguments (%d), expected 1 or 2." % (len(sys.argv) - 1))
 		return None
 			
 		
@@ -133,6 +135,13 @@ def main():
 	"""
 	Main method of the script.
 	"""
+	logging.basicConfig(filename='log.txt',
+                            filemode='a',
+                            format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
+                            datefmt='%H:%M:%S',
+                            level=logging.DEBUG)
+	logging.info("Starting client")
+	
 	params = read_params()
 	if not(params):
 		return

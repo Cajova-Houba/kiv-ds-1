@@ -17,6 +17,7 @@
 from bottle import Bottle, template, request, HTTPResponse
 import mysql.connector
 import heapq
+import logging
 
 class Transaction:
 	"""
@@ -35,7 +36,7 @@ class Transaction:
 		return self.id < other.id
 		
 	def is_debit(self):
-		return self.amount == "debit"
+		return self.type == "debit"
 		
 	def to_string(self):
 		return "{id: %s, amount: %s, type: %s}" % (self.id, self.amount, self.type)
@@ -78,7 +79,7 @@ class DbConnector:
 		"""
 		Credits given amount of money to the account.
 		"""
-		print("crediting %d" % amount)
+		logging.info("crediting %d" % amount)
 		self._perform_update_query(
 			"update account set balance = balance + %s where id = %s;",
 			amount
@@ -88,11 +89,22 @@ class DbConnector:
 		"""
 		Debits given amount of money from the account.
 		"""
-		print("debiting %d" % amount)
+		logging.info("debiting %d" % amount)
 		self._perform_update_query(
 			"update account set balance = balance - %s where id = %s;",
 			amount
 		)
+	
+	def get_amount(self):
+		"""
+		Returns the current amount of money in the bank account.
+		"""
+		db = self._connection
+		cursor = db.cursor()
+
+		cursor.execute("select balance from account")
+		return cursor.fetchone()
+		
 		
 
 class Bank:
@@ -131,7 +143,7 @@ class Bank:
 		Handler for /credit API.
 		"""
 		transaction = request.json
-		print("Credit: " + str(transaction))
+		logging.info("Credit: " + str(transaction))
 		self._add_transaction(Transaction(transaction["id"], transaction["amount"], "credit"))
 		return HTTPResponse(status = 200)
 	
@@ -140,7 +152,7 @@ class Bank:
 		Handler for /debit API.
 		"""
 		transaction = request.json
-		print("Debit: " + str(transaction))
+		logging.info("Debit: " + str(transaction))
 		self._add_transaction(Transaction(transaction["id"], transaction["amount"], "debit"))
 		return HTTPResponse(status = 200)
 	
@@ -154,15 +166,24 @@ class Bank:
 		heapq.heappush(self._transaction_heap, transaction)
 		
 		# expected transaction id -> pop from heap and execute it
+		curr_balance = None
 		while len(self._transaction_heap) > 0 and self._transaction_heap[0].id == self._expected_id:
 			t = heapq.heappop(self._transaction_heap)
-			print("Executing transaction: %s" % t.to_string())
+			logging.info("Executing transaction: %s" % t.to_string())
 			if t.is_debit():
 				self._db_connector.debit_money(t.amount)
 			else:
 				self._db_connector.credit_money(t.amount)
 				
 			self._expected_id = self._expected_id + 1
+			curr_balance = self._db_connector.get_amount()
+			
+		if curr_balance is not None:
+			with open("balance.txt", "w") as out_f:
+				out_f.write(str(curr_balance[0]))
+				out_f.write("\n")
+			
+		
 				
 		
 		
@@ -170,7 +191,17 @@ def main():
 	"""
 	Main method of the script, starts the server.
 	"""
+	logging.basicConfig(filename='log.txt',
+                            filemode='a',
+                            format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
+                            datefmt='%H:%M:%S',
+                            level=logging.DEBUG)
+	logging.info("Bank starting")
 	db_connector = DbConnector()
+	amount = db_connector.get_amount();
+	if amount is not None:
+		logging.info("Original balance: %s" % str(amount[0]));
+	
 	bank = Bank('0.0.0.0', 8100, True, db_connector)
 	bank.start()
 	db_connector.close_connection()

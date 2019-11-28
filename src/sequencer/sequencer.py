@@ -15,8 +15,9 @@
 
 from bottle import Bottle, template, request, HTTPResponse
 import requests
-
-SHUFFLER_URL = "http://localhost:8090"
+import json
+import sys
+import logging
 
 class Counter:
 	"""
@@ -44,7 +45,7 @@ class Sequencer:
 	Implementation of the sequencer server.
 	"""
 	
-	def __init__(self, counter, host, port, debug):
+	def __init__(self, counter, host, port, debug, shuffler_url):
 		"""
 		Initializes this server with given values.
 		"""
@@ -52,6 +53,7 @@ class Sequencer:
 		self._host = host
 		self._port = port
 		self._debug = debug
+		self._shuffler_url = shuffler_url
 		self._app = Bottle()
 		self._route()
 	
@@ -74,7 +76,7 @@ class Sequencer:
 		"""
 		new_body = request.json
 		new_body['id'] = self._counter.get_next_id()
-		print(new_body)
+		logging.info("Credit: %s" % str(new_body))
 		self._send_to_shuffler("credit", new_body)
 		return HTTPResponse(status = 202)
 	
@@ -84,7 +86,7 @@ class Sequencer:
 		"""
 		new_body = request.json
 		new_body['id'] = self._counter.get_next_id()
-		print(new_body)
+		logging.info("Debit: %s" % str(new_body))
 		self._send_to_shuffler("debit", new_body)
 		return HTTPResponse(status = 202)
 	
@@ -94,17 +96,39 @@ class Sequencer:
 		"""
 		operation_api = "/" + str(operation)
 		headers = {'Content-Type': 'application/json'}
-		response = requests.post(SHUFFLER_URL + operation_api, headers = headers, json = transaction)
+		response = requests.post(self._shuffler_url + operation_api, headers = headers, data = json.dumps(transaction))
 		if response.status_code != 202:
-			print("Error while sending transaction %d: %d" % (transaction["id"], response.status_code))
-		
+			logging.warning("Error while sending transaction %d: %d" % (transaction["id"], response.status_code))
+
+def read_params():
+	arg_count = len(sys.argv)
+	
+	params = {}
+	
+	if arg_count == 2:
+		params["base_api_url"] = sys.argv[1]
+		return params
+	else:
+		logging.warning("Wrong number of console arguments (%d), expected 1." % (len(sys.argv) - 1))
+		return None
+			
 		
 def main():
 	"""
 	Main method of the script, starts the server.
 	"""
+	logging.basicConfig(filename='log.txt',
+                            filemode='a',
+                            format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
+                            datefmt='%H:%M:%S',
+                            level=logging.DEBUG)
+	logging.info("Starting sequencer")
+	
+	params = read_params()
+	if params is None:
+		return
 	counter = Counter()
-	sequencer = Sequencer(counter, '0.0.0.0', 8080, True)
+	sequencer = Sequencer(counter, '0.0.0.0', 8100, True, params["base_api_url"])
 	sequencer.start()
 		
 

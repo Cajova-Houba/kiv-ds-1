@@ -3,13 +3,13 @@
 VAGRANTFILE_API_VERSION = "2"
 
 cluster = {
-  #"client"  => { :ip => "10.0.1.10", :cpus => 1, :mem => 512, :scriptSrc => './client/client.py', :scriptDst => 'client.py', :bootstrap => './client/bootstrap.sh' },
-  # "seq" => { :ip => "10.0.1.11", :cpus => 1, :mem => 512 },
-  # "shuff" => { :ip => "10.0.1.12", :cpus => 1, :mem => 512 },
-   "bank-1" => { :ip => "10.0.1.13", :cpus => 1, :mem => 512, :sources => './bank', :destination => 'bank', :bootstrap => './bank/bootstrap.sh' },
-  # "bank-2" => { :ip => "10.0.1.14", :cpus => 1, :mem => 512 },
-  # "bank-3" => { :ip => "10.0.1.15", :cpus => 1, :mem => 512 },
-  # "bank-4" => { :ip => "10.0.1.16", :cpus => 1, :mem => 512 },
+  "bank-1" => { :ip => "10.99.1.13", :cpus => 1, :mem => 512, :sources => './bank', :destination => 'bank', :bootstrap => './bank/bootstrap.sh' },
+  "bank-2" => { :ip => "10.99.1.14", :cpus => 1, :mem => 512, :sources => './bank', :destination => 'bank', :bootstrap => './bank/bootstrap.sh' },
+  #"bank-3" => { :ip => "10.99.1.15", :cpus => 1, :mem => 512, :sources => './bank', :destination => 'bank', :bootstrap => './bank/bootstrap.sh' },
+  #"bank-4" => { :ip => "10.99.1.16", :cpus => 1, :mem => 512, :sources => './bank', :destination => 'bank', :bootstrap => './bank/bootstrap.sh' },
+  "shuffler"  => { :ip => "10.99.1.12", :cpus => 1, :mem => 512, :sources => './shuffler', :destination => 'shuffler', :bootstrap => './shuffler/bootstrap.sh' },
+  "sequencer"  => { :ip => "10.99.1.11", :cpus => 1, :mem => 512, :sources => './sequencer', :destination => 'sequencer', :bootstrap => './sequencer/bootstrap.sh' },
+  "client"  => { :ip => "10.99.1.10", :cpus => 1, :mem => 512, :sources => './client', :destination => 'client', :bootstrap => './client/bootstrap.sh' },
 }
 
 # All Vagrant configuration is done below. The "2" in Vagrant.configure
@@ -17,22 +17,20 @@ cluster = {
 # backwards compatibility). Please don't change it unless you know what
 # you're doing.
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  # VM config
-  config.vm.box = "ubuntu/trusty32"
-  
-  cluster.each_with_index do |(hostname, info), index|
+  cluster.each do |hostname, info|
     config.vm.define hostname do |cfg|
+	  cfg.vm.box = "ubuntu/trusty32"
 	  cfg.vm.provider :virtualbox do |vb, override|
-	    
 		override.vm.network :private_network, ip: "#{info[:ip]}"
 		override.vm.hostname = hostname
 		vb.name = hostname
 		vb.customize ["modifyvm", :id, "--memory", info[:mem], "--cpus", info[:cpus], "--hwvirtex", "off", "--usb", "off"]
-		
-		config.vm.provision "file", source: "#{info[:sources]}", destination: "#{info[:destination]}"
-		
-		config.vm.provision "shell", path: "#{info[:bootstrap]}"
       end # end provider
+		
+		
+	  cfg.vm.provision "file", source: "#{info[:sources]}", destination: "#{info[:destination]}"
+		
+	  cfg.vm.provision "shell", path: "#{info[:bootstrap]}"
 	end # end config
   end # end cluster
 end
